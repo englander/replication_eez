@@ -1,0 +1,1 @@
+eez.shp is a shapefile of all EEZ-sea regions, not including any high seas regions. It was downloaded here: http://marineregions.org/download_file.php?name=Intersect_IHO_EEZ_v2_2012.zip

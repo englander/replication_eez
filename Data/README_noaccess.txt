@@ -1,0 +1,2 @@
+noaccess.Rdata is a character vector of flag states (fishing countries) that have unauthorized foreign fishing and have no 
+publicly recorded access agreements by the Sea Around Us or by the European Union 
