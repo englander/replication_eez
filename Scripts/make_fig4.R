@@ -17,6 +17,7 @@ library(purrr)
 library(sandwich)
 library(readr)
 library(haven)
+library(grid)
 
 #Make Fig 4a
 load("Data/ais_cross_100km.Rdata")
@@ -145,8 +146,7 @@ ggsave("Figures/fig4a.pdf",fig4a,
 lm(prop ~ xvar, data=badcoefs) %>% summary() #Yes. p-value = .012
 
 #clean up
-rm(list=ls())
-
+rm(aisdf, avgnpp, badmodel, myThemeStuff, quantFun, regFun, badcoefs)
 
 #Now create Figs 4b, c, and d
 
@@ -460,8 +460,6 @@ ggsave("Figures/fig4b.pdf",fig4b,
        width=88,height=54.83077,units="mm",dpi=1200) 
 
 
-
-
 #Calculate log treatment effects
 plotdf <- mutate(plotdf, logh = log(hours_msqkm), above_ind = if_else(above==1,1,0))
 
@@ -491,5 +489,20 @@ belowall <- lm(logh ~ inner + absdist + dist2 + dist3 + inner:absdist +
 100*(exp(coefficients(belowall)["inner"]) - 1) #-5%
 
 
-
+#Output one figure 4 with all four parts
+pdf(file="Figures/fig4.pdf",width=180/25.4,height=(56.08*2)/25.4)
+grid.newpage()
+v1 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .25, y = .75)
+v2 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .75, y = .75)
+v3 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .25, y = .25)
+v4 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .75, y = .25)
+print(fig4a, vp=v1)
+print(fig4b, vp=v2)
+print(fig4c, vp=v3)
+print(fig4d, vp=v4)
+dev.off()
 
