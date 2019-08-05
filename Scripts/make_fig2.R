@@ -217,7 +217,7 @@ fig2c <- ggplot(data = filter(aisdf, group == "bad_for")) +
   myThemeStuff + 
   geom_ribbon(aes(x=dist,ymin=min95,ymax=max95,shape=type),alpha=.3,fill="firebrick") + 
   scale_x_continuous(TeX("Distance to EEZ-high seas boundary (km)")) +
-  geom_path(data=detlab_brace, aes(x=x,y=y), size = .2,col="black") + 
+  geom_path(data=detlab_brace, aes(x=x,y=y), size = .25,col="black") + 
     geom_text(data=detlab_text, aes(x=x,y=y,label=text),hjust=0,
               family="sans",size=3,col="black") +
   guides(shape = FALSE) + 
@@ -232,6 +232,35 @@ fig2c <- ggplot(data = filter(aisdf, group == "bad_for")) +
 
 ggsave("Figures/fig2c.pdf",fig2c,
        width=88,height=54.83077,units="mm",dpi=1200) 
+
+#Remake fig2c with slightly thicker detlab_brace for when output fig2 as one figure with all four parts
+fig2c <- ggplot(data = filter(aisdf, group == "bad_for")) + 
+  geom_point(aes(x=dist, y = hours_msqkm, shape = type),size = .5,color="firebrick") + 
+  geom_smooth(aes(x=dist, y = hours_msqkm, shape = type),
+              formula = y~poly(x,3), method = "lm",se = FALSE, size = .3,color="firebrick") + 
+  scale_y_continuous(TeX("Unauthorized foreign fishing hours per m. $\ \ km^2$"), 
+                     breaks = mybreaks, 
+                     labels = mybreaks %>% prettyNum(","), 
+                     limits = c(0, max(aisdf$max95[aisdf$group=="bad_for"]))) + 
+  geom_vline(xintercept=0, color = "red") + 
+  scale_shape_manual("Location",
+                     values = c(1,16),
+                     labels = c("High seas","EEZs")) +   
+  myThemeStuff + 
+  geom_ribbon(aes(x=dist,ymin=min95,ymax=max95,shape=type),alpha=.3,fill="firebrick") + 
+  scale_x_continuous(TeX("Distance to EEZ-high seas boundary (km)")) +
+  geom_path(data=detlab_brace, aes(x=x,y=y), size = .3,col="black") + 
+  geom_text(data=detlab_text, aes(x=x,y=y,label=text),hjust=0,
+            family="sans",size=3,col="black") +
+  guides(shape = FALSE) + 
+  geom_text(data=textdf, aes(x=x,y=y,label=label),  size = 2.5, family = "sans", col = "black")+
+  theme(plot.margin = unit(c(0,.2,0,.01),"in"),
+        legend.position = c(0.87,.88), 
+        legend.margin = margin(0,0,0,0,unit="cm"), 
+        legend.key.height = unit(0, unit = "cm"),
+        legend.key.width=unit(0,unit="cm"),
+        legend.title.align = 0,axis.title.y = element_text(hjust = 1)) + 
+  labs(tag = "c")
 
 
 #Fig 2d
