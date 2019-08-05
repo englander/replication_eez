@@ -15,6 +15,8 @@ library(lfe)
 library(rworldmap)
 library(viridis)
 library(RColorBrewer)
+library(grid)
+library(rgeos)
 
 `%not in%` <- function (x, table) is.na(match(x, table, nomatch=NA_integer_))
 
@@ -34,6 +36,8 @@ aisdf <- mutate(aisdf, inner = if_else(type=="inner",1,0),
 coefs <- felm(hours_thsqkm ~ inner:MarRegion + dist:MarRegion + dist2:MarRegion + dist3:MarRegion + 
                 dist:inner:MarRegion + dist2:inner:MarRegion + dist3:inner:MarRegion
               | MarRegion, data = aisdf)
+#Note that the warning message refers to the calculation of the standard errors, 
+#which are not used in fig3
 
 #Grab deterrence effect for each EEZ-sea region
 plotcoefs <- coefficients(coefs)[grep("inner:MarRegion",coefficients(coefs) %>% names())]
@@ -130,7 +134,7 @@ myThemeStuff <- theme(panel.background = element_rect(fill = NA),
 )
 
 #Plot
-heterotreatplot_levels <- ggplot() + 
+fig3a <- ggplot() + 
   geom_sf(data = countries, fill = "gray90", col = NA) + 
   geom_sf(data=eez, aes(fill=coeffill), col = NA) + 
   scale_fill_viridis(TeX("Deterrence effect (hours per thousand $\ km^2$)"),trans='log', na.value='white',
@@ -144,7 +148,7 @@ heterotreatplot_levels <- ggplot() +
                        legend.position=c(.5,-.08)) + 
   labs(tag = "a")
 
-ggsave(plot=heterotreatplot_levels, filename = "Figures/fig3a.pdf",
+ggsave(plot=fig3a, filename = "Figures/fig3a.pdf",
        units = "mm", width = 180, height = 120, dpi = 1200)
 
 #19 have no AIS data of any kind
@@ -179,7 +183,7 @@ tothours <- group_by(aisdf, MarRegion) %>%
 eez <- left_join(eez, tothours, by = "MarRegion")
 
 #Plot
-densplot <- ggplot() + 
+fig3b <- ggplot() + 
   geom_sf(data = countries, fill = "gray90", col = NA) + 
   geom_sf(data=eez, aes(fill=tothours_thsqkm), col = NA) + 
   scale_fill_viridis(TeX("Unauthorized foreign fishing hours per thousand $\ km^2$ within 50 km of boundary"),
@@ -194,7 +198,7 @@ densplot <- ggplot() +
                        legend.position=c(.5,-.08)) + 
   labs(tag = "b")
 
-ggsave(plot=densplot, filename = "Figures/fig3b.pdf",
+ggsave(plot=fig3b, filename = "Figures/fig3b.pdf",
        units = "mm", width = 180, height = 120, dpi = 1200)
 
 
@@ -218,3 +222,15 @@ supfig9 <- ggplot() +
 
 ggsave(plot=supfig9, filename = "Figures/supfig9.png",
        units = "mm", width = 180, height = 120, dpi = 1200)
+
+
+#Output one figure 3 with both parts
+pdf(file="Figures/fig3.pdf",width=180/25.4,height=(110*2)/25.4)
+grid.newpage()
+v1 <-viewport(width = unit(180/25.4, "inches"), height = unit(110/25.4, "inches"),
+              x = .5, y = .77)
+v2 <-viewport(width = unit(180/25.4, "inches"), height = unit(110/25.4, "inches"),
+              x = .5, y = .27)
+print(fig3a, vp=v1)
+print(fig3b, vp=v2)
+dev.off()
