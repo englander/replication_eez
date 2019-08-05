@@ -14,6 +14,7 @@ library(readr)
 library(purrr)
 library(sandwich)
 library(haven)
+library(grid)
 
 myThemeStuff <- theme(panel.background = element_rect(fill = NA),
                       panel.border = element_rect(fill = NA, color = "black"),
@@ -374,3 +375,20 @@ fig2b <- ggplot(data = vbd,
 ggsave("Figures/fig2b.pdf",fig2b,
        width=88,height=54.83077,units="mm",dpi=1200) 
 
+
+#Output one figure 2 with all four parts
+pdf(file="Figures/fig2.pdf",width=180/25.4,height=(56.08*2)/25.4)
+grid.newpage()
+v1 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .25, y = .75)
+v2 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .75, y = .75)
+v3 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .25, y = .25)
+v4 <-viewport(width = unit(90/25.4, "inches"), height = unit(56.08/25.4, "inches"),
+              x = .75, y = .25)
+print(fig2a, vp=v1)
+print(fig2b, vp=v2)
+print(fig2c, vp=v3)
+print(fig2d, vp=v4)
+dev.off()
