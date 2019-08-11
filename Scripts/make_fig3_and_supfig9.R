@@ -120,7 +120,7 @@ eez$coeffill <- -eez$coeffill
 #Theme for ggplot
 myThemeStuff <- theme(panel.background = element_rect(fill = NA),
                       panel.border = element_rect(fill = NA, color = NA),
-                      panel.grid.major = element_line(color="gray90"), #turn off graticules
+                      panel.grid.major = element_line(color="gray90",size=.1), 
                       panel.grid.minor = element_blank(),
                       axis.ticks = element_line(color = "gray5",size=.35),
                       axis.text = element_text(color = "black", size = 6, family="sans"),
@@ -137,7 +137,7 @@ myThemeStuff <- theme(panel.background = element_rect(fill = NA),
 fig3a <- ggplot() + 
   geom_sf(data = countries, fill = "gray90", col = NA) + 
   geom_sf(data=eez, aes(fill=coeffill), col = NA) + 
-  scale_fill_viridis(TeX("Deterrence effect (hours per thousand $\ km^2$)"),trans='log', na.value='white',
+  scale_fill_viridis(TeX("Deterrence effect (hours per thousand $\ km^2$)"),trans='log',na.value=NA,
                      breaks = c(1,7,55,400,3000,20000),
                      labels = c("1","7","55","400","3,000","20,000"),
                        guide = guide_colorbar(direction = "horizontal",
