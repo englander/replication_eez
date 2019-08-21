@@ -23,7 +23,7 @@ newey hours_msqkm inner##c.dist##c.dist##c.dist, lag(5) force
 set matsize 9000
 margins inner, at(dist=(-49.5(1)49.5)) post noestimcheck level(95)
 parmest, norestore level(95)
-outsheet using "Data\Confidence_Intervals\fig4d_above_ci.csv", comma replace  //writing out results for R
+outsheet using "Data\Confidence_Intervals\fig4d_above_ci.csv", comma replace  
 
 *Have to reload data
 use "Data\ais_fig4dat.dta", clear
@@ -39,7 +39,7 @@ newey hours_msqkm inner##c.dist##c.dist##c.dist, lag(6) force
 set matsize 9000
 margins inner, at(dist=(-49.5(1)49.5)) post noestimcheck level(95)
 parmest, norestore level(95)
-outsheet using "Data\Confidence_Intervals\fig4d_below_ci.csv", comma replace  //writing out results for R
+outsheet using "Data\Confidence_Intervals\fig4d_below_ci.csv", comma replace  
 
 *Have to reload data
 use "Data\ais_fig4dat.dta", clear
@@ -55,7 +55,7 @@ newey hours_msqkm inner##c.dist##c.dist##c.dist, lag(6) force
 set matsize 9000
 margins inner, at(dist=(-49.5(1)49.5)) post noestimcheck level(95)
 parmest, norestore level(95)
-outsheet using "Data\Confidence_Intervals\fig4c_above_ci.csv", comma replace  //writing out results for R
+outsheet using "Data\Confidence_Intervals\fig4c_above_ci.csv", comma replace  
 
 
 *Have to reload data
@@ -72,7 +72,7 @@ newey hours_msqkm inner##c.dist##c.dist##c.dist, lag(1) force
 set matsize 9000
 margins inner, at(dist=(-49.5(1)49.5)) post noestimcheck level(95)
 parmest, norestore level(95)
-outsheet using "Data\Confidence_Intervals\fig4c_below_ci.csv", comma replace  //writing out results for R
+outsheet using "Data\Confidence_Intervals\fig4c_below_ci.csv", comma replace  
 
 
 *Have to reload data
@@ -89,7 +89,7 @@ newey hours_msqkm inner##c.dist##c.dist##c.dist, lag(5) force
 set matsize 9000
 margins inner, at(dist=(-49.5(1)49.5)) post noestimcheck level(95)
 parmest, norestore level(95)
-outsheet using "Data\Confidence_Intervals\fig4b_above_ci.csv", comma replace  //writing out results for R
+outsheet using "Data\Confidence_Intervals\fig4b_above_ci.csv", comma replace  
 
 
 *Have to reload data
@@ -106,5 +106,5 @@ newey hours_msqkm inner##c.dist##c.dist##c.dist, lag(4) force
 set matsize 9000
 margins inner, at(dist=(-49.5(1)49.5)) post noestimcheck level(95)
 parmest, norestore level(95)
-outsheet using "Data\Confidence_Intervals\fig4b_below_ci.csv", comma replace  //writing out results for R
+outsheet using "Data\Confidence_Intervals\fig4b_below_ci.csv", comma replace  
 
