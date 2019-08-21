@@ -145,6 +145,10 @@ ggsave("Figures/fig4a.pdf",fig4a,
 #Is trend in deterrence effects statistically significant?
 lm(prop ~ xvar, data=badcoefs) %>% summary() #Yes. p-value = .012
 
+#178 EEZ-sea regions with more than zero ais fishing hours for use in calculating median average npp
+#for figs 4b-d
+m178 <- unique(aisdf$MarRegion) %>% as.character()
+
 #clean up
 rm(aisdf, avgnpp, badmodel, myThemeStuff, quantFun, regFun, badcoefs)
 
@@ -155,12 +159,12 @@ load("Data/ais_badfor.Rdata")
 #Load average NPP
 load("Data/avgnpp.Rdata")
 
-#What is median average npp for MarRegions in aisdf?
-mednpp <- filter(avgnpp,  MarRegion %in% unique(aisdf$MarRegion)) %>% 
+#What is median average npp for 178 MarRegions with more than zero AIS fishing hours?
+mednpp <- filter(avgnpp,  MarRegion %in% m178) %>% 
   summarise(mednpp = median(npp)) %>% as.matrix() %>% as.numeric()
 
 #Calculate whether MarRegion is above or below median npp
-nppmed <- filter(avgnpp, MarRegion %in% unique(aisdf$MarRegion)) %>% 
+nppmed <- filter(avgnpp, MarRegion %in% m178) %>% 
   mutate(above = if_else(npp >= mednpp, 1, 0)) %>% 
   dplyr::select(-npp)
 
@@ -168,7 +172,7 @@ nppmed <- filter(avgnpp, MarRegion %in% unique(aisdf$MarRegion)) %>%
 aisdf <- left_join(aisdf, nppmed, by = "MarRegion")
 
 #Clean up
-rm(avgnpp, nppmed, mednpp)
+rm(avgnpp, m178, mednpp)
 
 #Create an indicator variable for whether geartype is drifting_longlines
 aisdf <- mutate(aisdf, drifting = if_else(geartype=="drifting_longlines",1,0))
@@ -177,20 +181,27 @@ aisdf <- mutate(aisdf, drifting = if_else(geartype=="drifting_longlines",1,0))
 plotdf <- group_by(aisdf, dist, type, above, drifting) %>% 
   summarise(hours = sum(hours)) %>% ungroup()
 
+rm(aisdf)
+
+#Get total area of each 1 km buffer for EEZ-sea regions with above and below median average NPP
+load("Data/ais_cross_100km.Rdata")
+
+aisdf <- filter(aisdf, dist <= 50) %>% 
+  distinct(MarRegion, dist, type, Area_km2) %>% 
+  #Join indicator for whether EEZ-sea region is above or below median average NPP
+  left_join(nppmed, by = 'MarRegion') %>% 
+  #Sum to above-dist-type level
+  group_by(dist, type, above) %>%
+  summarise(Area_km2 = sum(Area_km2)) %>% ungroup()
+
+#Join area onto plotdf
+plotdf <- left_join(plotdf, aisdf, by = c("dist",'type','above'))
+
 #Center on middle of integer bin
 plotdf$dist <- plotdf$dist - .5
 
 #Put outer on left side of plot
 plotdf <- mutate(plotdf, dist = if_else(type=="outer",-dist,dist))
-
-#Get total area of each 1 km buffer
-load("Data/ais_vestype_100km.Rdata")
-
-aisdf <- filter(aisdf, abs(dist) <=50) %>% 
-  distinct(dist, type, Area_km2)
-
-#Join onto plotdf
-plotdf <- left_join(plotdf, aisdf, by = c("dist","type"))
 
 #Calculate hours per million km^2
 plotdf <- mutate(plotdf, hours_msqkm = (hours/Area_km2)*10^6)
@@ -223,21 +234,21 @@ abovedrift <- lm(hours_msqkm ~ inner + absdist + dist2 + dist3 + inner:absdist +
 
 #Bandwidth
 bwNeweyWest(abovedrift, kernel = "Quadratic Spectral") #4.3
-bwNeweyWest(abovedrift, kernel = "Bartlett") #5.2
+bwNeweyWest(abovedrift, kernel = "Bartlett") #5.1
 
 belowdrift <- lm(hours_msqkm ~ inner + absdist + dist2 + dist3 + inner:absdist + 
                    inner:dist2 + inner:dist3, data = filter(plotdf, above==0 & drifting==1))
 
 #Bandwidth
-bwNeweyWest(belowdrift, kernel = "Quadratic Spectral") #.9
-bwNeweyWest(belowdrift, kernel = "Bartlett") #.2
+bwNeweyWest(belowdrift, kernel = "Quadratic Spectral") #.2
+bwNeweyWest(belowdrift, kernel = "Bartlett") #.5
 
 rm(abovedrift, belowdrift, abovenarrow, belownarrow)
 
 #Also want to make a plot for all fishing types
 allfish <- group_by(plotdf, dist, type, above, Area_km2, absdist, dist2, dist3, inner) %>% 
   summarise(hours = sum(hours)) %>% ungroup() %>%
-  mutate(hours_msqkm = (hours/Area_km2)*1000000)
+  mutate(hours_msqkm = (hours/Area_km2)*10^6)
 
 allabove <- lm(hours_msqkm ~ inner + absdist + dist2 + dist3 + inner:absdist + 
                  inner:dist2 + inner:dist3, data = filter(allfish, above==1))
