@@ -218,7 +218,8 @@ supfig9 <- ggplot() +
                                             title.position="top")) +
   myThemeStuff + theme(legend.key.width = unit(2.1, "cm"),
                        legend.title.align=.5,
-                       legend.position=c(.5,-.08))
+                       legend.position=c(.5,-.08),
+                       panel.grid.major = element_line(color="gray90",size=.35))
 
 ggsave(plot=supfig9, filename = "Figures/supfig9.png",
        units = "mm", width = 180, height = 120, dpi = 1200)
