@@ -337,7 +337,7 @@ textdf <- rbind(
   rename(x=V1,y=V2,label=V3) %>% mutate(x=as.numeric(x), y=as.numeric(y))
 
 
-mybreaks <- seq(from=0,to=200000,by=50000)
+mybreaks <- seq(from=0,to=500000,by=100000)
 
 fig4d <- 
   ggplot(data=filter(plotdf, drifting==0), aes(x=dist,y=hours_msqkm)) + 
@@ -368,7 +368,7 @@ fig4d <-
   scale_y_continuous(TeX("Non-drifting longline fishing hours per m. $\ \ km^2$"),
                      breaks = mybreaks, 
                      labels = mybreaks %>% prettyNum(","),
-                     limits = c(-10000,max(plotdf$max95[plotdf$drifting==0]))) + 
+                     limits = c(-10000,max(plotdf$max95[plotdf$drifting==0],na.rm=T))) + 
   geom_text(data=textdf, aes(x=x,y=y,label=label),  size = 2.5, family = "sans") + 
   labs(tag = "d")
 
@@ -384,7 +384,7 @@ textdf <- rbind(
 ) %>% as.data.frame() %>% tbl_df() %>% mutate_all(as.character) %>%
   rename(x=V1,y=V2,label=V3) %>% mutate(x=as.numeric(x), y=as.numeric(y))
 
-mybreaks <- seq(from=0,to=75000,by=25000)
+mybreaks <- seq(from=0,to=125000,by=25000)
 
 fig4c <- 
   ggplot(data=filter(plotdf, drifting==1), aes(x=dist,y=hours_msqkm)) + 
@@ -415,7 +415,7 @@ fig4c <-
   scale_y_continuous(TeX("Drifting longline fishing hours per m. $\ \ km^2$"),
                      breaks = mybreaks, 
                      labels = mybreaks %>% prettyNum(","),
-                     limits = c(-1000,max(plotdf$max95[plotdf$drifting==1]))) + 
+                     limits = c(-1000,max(plotdf$max95[plotdf$drifting==1],na.rm=T))) + 
   geom_text(data=textdf, aes(x=x,y=y,label=label),  size = 2.5, family = "sans") + 
   labs(tag = "c")
 
@@ -431,7 +431,7 @@ textdf <- rbind(
 ) %>% as.data.frame() %>% tbl_df() %>% mutate_all(as.character) %>%
   rename(x=V1,y=V2,label=V3) %>% mutate(x=as.numeric(x), y=as.numeric(y))
 
-mybreaks <- seq(from=0,to=200000,by=50000)
+mybreaks <- seq(from=0,to=600000,by=100000)
 
 fig4b <- 
   ggplot(data=filter(plotdf, is.na(drifting)), aes(x=dist,y=hours_msqkm)) + 
@@ -484,12 +484,12 @@ belownarrow <- lm(logh ~ inner + absdist + dist2 + dist3 + inner:absdist +
 
 abovedrift <- lm(logh ~ inner + absdist + dist2 + dist3 + inner:absdist + 
                    inner:dist2 + inner:dist3, data = filter(plotdf, above==1 & drifting==1))
-100*(exp(coefficients(abovedrift)["inner"]) - 1) #-74%
+100*(exp(coefficients(abovedrift)["inner"]) - 1) #-75%
 
 
 belowdrift <- lm(logh ~ inner + absdist + dist2 + dist3 + inner:absdist + 
                    inner:dist2 + inner:dist3, data = filter(plotdf, above==0 & drifting==1))
-100*(exp(coefficients(belowdrift)["inner"]) - 1) #-6%
+100*(exp(coefficients(belowdrift)["inner"]) - 1) #-5%
 
 aboveall <- lm(logh ~ inner + absdist + dist2 + dist3 + inner:absdist + 
                  inner:dist2 + inner:dist3, data = filter(plotdf, above==1 & is.na(drifting)))
