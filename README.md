@@ -1,6 +1,6 @@
 Replication files for "Property rights and the protection of global marine resources"
 
-Data and date processing is described in the main text, Methods, and Supplementary Information
+Data and data processing is described in the main text, Methods, and Supplementary Information
 
 .R files make their namesake figures or tables
 
