@@ -1,4 +1,4 @@
-Replication files for "Property rights and the protection of global marine resources"
+Replication files for: Englander, G. Property rights and the protection of global marine resources. Nature Sustainability 2, 981–987 (2019). https://doi.org/10.1038/s41893-019-0389-9
 
 Data and data processing is described in the main text, Methods, and Supplementary Information
 
